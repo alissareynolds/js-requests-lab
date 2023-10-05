@@ -24,9 +24,9 @@ let sayHelloButton = document.querySelector('#say-hello-button');
 
 // CODE HERE
 
-function changeColor () {
-sayHelloButton.style.backgroundColor = 'black';
-sayHelloButton.style.color = 'white';
+function changeColor() {
+    sayHelloButton.style.backgroundColor = 'black';
+    sayHelloButton.style.color = 'white';
 }
 
 sayHelloButton.addEventListener('mouseover', changeColor);
@@ -44,9 +44,9 @@ sayHelloButton.addEventListener('mouseover', changeColor);
 
 // CODE HERE
 
-function changeColorBack () {
-sayHelloButton.style.backgroundColor = '#EFEFEF';
-sayHelloButton.style.color = 'black';
+function changeColorBack() {
+    sayHelloButton.style.backgroundColor = '#EFEFEF';
+    sayHelloButton.style.color = 'black';
 }
 
 sayHelloButton.addEventListener('mouseover', changeColorBack);
@@ -82,11 +82,15 @@ sayHelloButton.addEventListener('click', sayHello);
     Use axios inside the ohMy function to make a GET request to 'http://localhost:3000/animals' 
     
     Handle the promise that's returned with a .then, which you should pass a callback function to. Inside the callback function, console.log the response's data (in the intermediate instructions we'll come back to this function and add HTML).
-*/ 
+*/
 
 const ohMy = () => {
-    axios.get('http://localhost:3000/animals').then((response) => {
-        console.log(response.data);
+    axios.get('http://localhost:3000/animals').then((res) => {
+        for (let i = 0; i < res.data.length; i++) {
+            let p = document.createElement('p');
+            p.textContent = res.data[i]
+            document.body.append(p);
+        }
     })
 }
 
@@ -106,9 +110,22 @@ document.getElementById('animals-button').addEventListener('click', ohMy)
     We'll be updating this function in the next problem.
 */
 
-const repeatMyParam = () => {
-    axios.get(`http://localhost:3000/repeat/${SOMEPARAM}`)
+const repeatMyParam = (param) => {
+    axios.get(`http://localhost:3000/repeat/${param}`).then((response) => {
+        console.log('Hi Im inside the response')
+        console.log(param);
+        let requestText = document.getElementById('repeat-text')
+        requestText.textContent = response.data;
+        requestText.style.display = "block";
+
+    })
+    console.log('hello');
+    return param;
 }
+
+let button = document.getElementById("repeat-button");
+button.addEventListener('click', repeatMyParam);
+
 
 // PROBLEM 7
 /*
@@ -129,11 +146,20 @@ const repeatMyParam = () => {
 
     Write a function that makes a get request to 'http://localhost:3000/query-test', with a query of your choice on the end!
 
+
     Outside of your new function, select the button with the id "query-button" and add a click event listener that calls your function.
 */
 
 // CODE HERE
 
+const makeRequest = () => {
+    axios.get(`http://localhost:3000/query-test?alissa=42&&boo=4`).then((response) => {
+        console.log(response.data);
+    })
+}
+
+let queryButton = document.getElementById('query-button');
+queryButton.addEventListener('click', makeRequest);
 
 
 ////////////////
@@ -153,9 +179,9 @@ const repeatMyParam = () => {
 /*
     In the function that you wrote for Problem 8, change the URL to test a couple different scenarios. 
 
-    1: Send no queries on the URL -- what happened? 
+    1: Send no queries on the URL -- what happened? The console says that you sent an empty query. 
 
-    2: Send more than 1 query on the URL -- what happened? 
+    2: Send more than 1 query on the URL -- what happened? Your query object has multiple fields. 
 */
 
 // Edit code in Problem 8
@@ -186,3 +212,22 @@ const repeatMyParam = () => {
 */
 
 // CODE HERE 
+
+function createFood(event) {
+    event.preventDefault();
+    let foodInput = document.querySelector('#food-input');
+    let body = {
+        newFood: foodInput.value
+    }
+    axios.post('http://localhost:3000/food', body).then((response) => {
+        let array = response.data;
+        for (let i = 0; i < array.length; i++) {
+            let p = document.createElement('p');
+            p.textContent = response.data[i]
+            document.body.append(p);
+        }
+        console.log(array);
+    });
+}
+let foodButton = document.querySelector('#add-food-button');
+foodButton.addEventListener('click', createFood);
